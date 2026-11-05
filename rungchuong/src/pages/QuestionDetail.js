@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LEVELS, POINTS, LETTERS } from '../data';
 
-function QuestionDetail({ questions }) {
+const QuestionDetail = ({ questions }) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ function QuestionDetail({ questions }) {
   return (
     <div>
       <h2>
-        Câu hỏi số {question.id} – {question.topic} ({LEVELS[question.level]}, {POINTS[question.level]} điểm)
+        {`Câu hỏi số ${question.id} – ${question.topic} (${LEVELS[question.level]}, ${POINTS[question.level]} điểm)`}
       </h2>
       <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{question.question}</p>
 
@@ -38,7 +38,8 @@ function QuestionDetail({ questions }) {
                 fontWeight: isCorrect ? 'bold' : 'normal'
               }}
             >
-              {LETTERS[idx]}. {option} {isCorrect && '(Đáp án đúng)'}
+              {`${LETTERS[idx]}. ${option} `}
+              {isCorrect && '(Đáp án đúng)'}
             </div>
           );
         })}
@@ -47,6 +48,6 @@ function QuestionDetail({ questions }) {
       <button onClick={() => navigate(-1)}>Quay lại</button>
     </div>
   );
-}
+};
 
 export default QuestionDetail;

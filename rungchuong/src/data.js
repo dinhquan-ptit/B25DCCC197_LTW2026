@@ -16,3 +16,13 @@ export const RANKS = [
   { min: 100, title: 'Khá' },
   { min: 0, title: 'Cần cố gắng' },
 ];
+export function calcScore(answers) {
+  return answers
+    .filter((a) => a.correct)
+    .reduce((sum, a) => sum + (POINTS[a.level] || 0), 0);
+}
+
+export function getRank(score) {
+  const found = RANKS.find((r) => score >= r.min);
+  return found ? found.title : 'Cần cố gắng';
+}

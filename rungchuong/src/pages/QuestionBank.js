@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TOPICS, LEVELS } from '../data';
 
-function Questions({ questions }) {
+const QuestionBank = ({ questions }) => {
   const [selectedTopic, setSelectedTopic] = useState('Tất cả');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Lọc theo chủ đề và từ khóa (không phân biệt hoa thường)
   const filteredQuestions = questions.filter((q) => {
     const matchTopic = selectedTopic === 'Tất cả' || q.topic === selectedTopic;
     const matchSearch = q.question.toLowerCase().includes(searchTerm.toLowerCase());
@@ -39,7 +38,7 @@ function Questions({ questions }) {
         </div>
       </div>
 
-      <p style={{ fontWeight: 'bold' }}>Có {filteredQuestions.length} câu hỏi</p>
+      <p style={{ fontWeight: 'bold' }}>{`Có ${filteredQuestions.length} câu hỏi`}</p>
 
       <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
         <thead>
@@ -65,6 +64,6 @@ function Questions({ questions }) {
       </table>
     </div>
   );
-}
+};
 
-export default Questions;
+export default QuestionBank;

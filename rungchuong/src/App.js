@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Layout from './components/Layout';
-import Questions from './components/Questions';
-import QuestionDetail from './components/QuestionDetail';
-import NotFound from './components/NotFound';
+import Home from './pages/Home';
+import Play from './pages/Play';
+import Result from './pages/Result';
+import QuestionBank from './pages/QuestionBank';
+import QuestionDetail from './pages/QuestionDetail';
+import NotFound from './pages/NotFound';
 
-function App() {
+const App = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [playerName, setPlayerName] = useState('');
+  const [history, setHistory] = useState([]); // Chuẩn bị cho Bài 3
 
   useEffect(() => {
     const controller = new AbortController();
@@ -22,9 +27,7 @@ function App() {
         setLoading(false);
       })
       .catch((err) => {
-        if (axios.isCancel(err)) {
-          return; // Request bị hủy thì bỏ qua
-        }
+        if (axios.isCancel(err)) return;
         setError('Không tải được câu hỏi');
         setLoading(false);
       });
@@ -37,15 +40,26 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* Route con index (Trang chủ tạm để h2 tiêu đề) */}
-        <Route index element={<h2>Trang chủ</h2>} />
-
-        {/* Các route của bài sau tạm để h2 */}
-        <Route path="play" element={<h2>Màn hình thi</h2>} />
-        <Route path="result" element={<h2>Kết quả</h2>} />
-        <Route path="history" element={<h2>Lịch sử</h2>} />
-
-        {/* Routes của Bài 1 */}
+        <Route
+          index
+          element={<Home playerName={playerName} setPlayerName={setPlayerName} />}
+        />
+        <Route
+          path="play"
+          element={
+            !playerName.trim() ? (
+              <Navigate to="/" replace />
+            ) : loading ? (
+              <p>Đang tải câu hỏi...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : (
+              <Play questions={questions} playerName={playerName} />
+            )
+          }
+        />
+        <Route path="result" element={<Result />} />
+        <Route path="history" element={<h2>Lịch sử các lượt chơi (Bài 3)</h2>} />
         <Route
           path="questions"
           element={
@@ -54,7 +68,7 @@ function App() {
             ) : error ? (
               <p>{error}</p>
             ) : (
-              <Questions questions={questions} />
+              <QuestionBank questions={questions} />
             )
           }
         />
@@ -68,12 +82,10 @@ function App() {
             )
           }
         />
-
-        {/* Route bắt tất cả các đường dẫn khác */}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
-}
+};
 
 export default App;

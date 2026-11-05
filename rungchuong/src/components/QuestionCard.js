@@ -1,7 +1,15 @@
 import React from 'react';
 import { LEVELS, LETTERS } from '../data';
 
-const QuestionCard = ({ question, index, total, selectedOption, status, onSelectOption }) => {
+const QuestionCard = ({
+  question,
+  index,
+  total,
+  selectedOption,
+  status,
+  onSelectOption,
+  hiddenOptionIndex
+}) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px' }}>
       <div style={{ fontSize: '18px', color: '#555', marginBottom: '8px' }}>
@@ -11,6 +19,8 @@ const QuestionCard = ({ question, index, total, selectedOption, status, onSelect
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         {question.options.map((option, idx) => {
+          const isHidden = hiddenOptionIndex === idx;
+
           let btnColor = '#f5f5f5';
           let textColor = '#000';
 
@@ -29,21 +39,31 @@ const QuestionCard = ({ question, index, total, selectedOption, status, onSelect
           return (
             <button
               key={idx}
-              disabled={status !== 'answering'}
+              disabled={status !== 'answering' || isHidden}
               onClick={() => onSelectOption(idx)}
               style={{
                 padding: '16px',
                 fontSize: '16px',
                 textAlign: 'left',
-                backgroundColor: btnColor,
+                backgroundColor: isHidden ? '#fafafa' : btnColor,
                 color: textColor,
-                border: '1px solid #ccc',
+                border: isHidden ? '1px dashed #ddd' : '1px solid #ccc',
                 borderRadius: '6px',
-                cursor: status === 'answering' ? 'pointer' : 'default',
-                fontWeight: selectedOption === idx || (status === 'revealed' && idx === question.answer) ? 'bold' : 'normal'
+                cursor: status === 'answering' && !isHidden ? 'pointer' : 'default',
+                fontWeight:
+                  selectedOption === idx || (status === 'revealed' && idx === question.answer)
+                    ? 'bold'
+                    : 'normal',
+                visibility: isHidden ? 'visible' : 'visible'
               }}
             >
-              <strong>{LETTERS[idx]}.</strong> {option}
+              {isHidden ? (
+                <span style={{ color: '#aaa', fontStyle: 'italic' }}>&nbsp;</span>
+              ) : (
+                <>
+                  <strong>{LETTERS[idx]}.</strong> {option}
+                </>
+              )}
             </button>
           );
         })}

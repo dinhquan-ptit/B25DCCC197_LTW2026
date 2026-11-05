@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Home = ({ playerName, setPlayerName }) => {
+const Home = ({ playerName, setPlayerName, history }) => {
   const navigate = useNavigate();
 
   const handleStart = (e) => {
@@ -12,17 +12,28 @@ const Home = ({ playerName, setPlayerName }) => {
   };
 
   const isButtonDisabled = !playerName || playerName.trim() === '';
+  let recordText = null;
+  if (history && history.length > 0) {
+    const highestRecord = [...history].sort((a, b) => b.score - a.score)[0];
+    recordText = `Kỷ lục: ${highestRecord.score} điểm – ${highestRecord.name}`;
+  }
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
       <h1>Rung chuông vàng</h1>
-      
+
+      {recordText && (
+        <div style={{ margin: '12px 0', fontSize: '18px', color: '#d9534f', fontWeight: 'bold' }}>
+          {recordText}
+        </div>
+      )}
+
       <div style={{ textAlign: 'left', background: '#f8f9fa', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
         <h3>Luật chơi:</h3>
         <ul>
           <li>Trả lời lần lượt 15 câu hỏi về HTML, CSS, JavaScript và React.</li>
           <li>Mỗi câu có 20 giây suy nghĩ.</li>
-          <li>Trả lời sai hoặc hết giờ bị loại ngay.</li>
+          <li>Trả lời sai hoặc hết giờ bị loại ngay (trừ khi dùng phao cứu sinh).</li>
           <li>Đúng cả 15 câu thì rung chuông vàng với 300 điểm.</li>
         </ul>
       </div>

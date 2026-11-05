@@ -10,7 +10,19 @@ const ScoreBoard = ({ score, currentQuestionIndex, answers }) => {
         {Array.from({ length: 15 }, (_, i) => {
           const answer = answers[i];
           const isCorrect = answer && answer.correct;
+          const isLifebuoy = answer && answer.usedLifebuoy;
           const isCurrent = i === currentQuestionIndex;
+
+          let bg = '#e0e0e0';
+          let textColor = '#000';
+
+          if (isCorrect) {
+            bg = '#4caf50'; // Xanh lá
+            textColor = '#fff';
+          } else if (isLifebuoy) {
+            bg = '#fd7e14'; // Màu cam khi dùng phao
+            textColor = '#fff';
+          }
 
           return (
             <div
@@ -21,8 +33,8 @@ const ScoreBoard = ({ score, currentQuestionIndex, answers }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: isCorrect ? '#4caf50' : '#e0e0e0',
-                color: isCorrect ? '#fff' : '#000',
+                backgroundColor: bg,
+                color: textColor,
                 border: isCurrent ? '3px solid #000' : '1px solid #bbb',
                 fontWeight: isCurrent ? 'bold' : 'normal',
                 borderRadius: '4px'

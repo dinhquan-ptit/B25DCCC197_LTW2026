@@ -6,17 +6,28 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Play from './pages/Play';
 import Result from './pages/Result';
+import History from './pages/History';
 import QuestionBank from './pages/QuestionBank';
 import QuestionDetail from './pages/QuestionDetail';
 import NotFound from './pages/NotFound';
+
+const LOCAL_STORAGE_KEY = 'ltw_rcv_history';
 
 const App = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [playerName, setPlayerName] = useState('');
-  const [history, setHistory] = useState([]); // Chuẩn bị cho Bài 3
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
 
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+  }, [history]);
+
+  // 3. Tải câu hỏi từ public/data/questions.json
   useEffect(() => {
     const controller = new AbortController();
 
@@ -37,12 +48,26 @@ const App = () => {
     };
   }, []);
 
+  const handleAddHistoryRecord = (record) => {
+    setHistory((prev) => [record, ...prev]);
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+  };
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route
           index
-          element={<Home playerName={playerName} setPlayerName={setPlayerName} />}
+          element={
+            <Home
+              playerName={playerName}
+              setPlayerName={setPlayerName}
+              history={history}
+            />
+          }
         />
         <Route
           path="play"
@@ -54,12 +79,24 @@ const App = () => {
             ) : error ? (
               <p>{error}</p>
             ) : (
-              <Play questions={questions} playerName={playerName} />
+              <Play
+                questions={questions}
+                playerName={playerName}
+                onAddHistoryRecord={handleAddHistoryRecord}
+              />
             )
           }
         />
         <Route path="result" element={<Result />} />
-        <Route path="history" element={<h2>Lịch sử các lượt chơi (Bài 3)</h2>} />
+        <Route
+          path="history"
+          element={
+            <History
+              history={history}
+              onClearHistory={handleClearHistory}
+            />
+          }
+        />
         <Route
           path="questions"
           element={
